@@ -1,4 +1,4 @@
-package com.drp.network.beans;
+package com.drp.gank1.beans;
 
 import java.io.Serializable;
 import java.util.List;
