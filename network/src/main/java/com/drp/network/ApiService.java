@@ -6,14 +6,16 @@ import android.util.Log;
 import com.drp.network.beans.GankData;
 import com.drp.network.interceptor.CommonRequestInterceptor;
 import com.drp.network.interceptor.CommonResponseInterceptor;
+import com.drp.network.observer.BaseObserver;
 import com.google.gson.Gson;
 
+import io.reactivex.Observable;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 import retrofit2.Retrofit;
+import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 /**
@@ -33,23 +35,25 @@ public class ApiService {
         Retrofit retrofit = new Retrofit.Builder().baseUrl(Constants.BASE_URL)
                 .client(getOkhttp())
                 .addConverterFactory(GsonConverterFactory.create())
+                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                 .build();
 
         Api api = retrofit.create(Api.class);
-        Call<GankData> gankList = api.getGankListByCategory(category, page, size);
-        gankList.enqueue(new Callback() {
-            @Override
-            public void onResponse(Call call, Response response) {
-                Log.i(TAG, new Gson().toJson(response.body()));
+        Observable<GankData> gankList = api.getGankListByCategory(category, page, size);
+        gankList.subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new BaseObserver<GankData>() {
 
-            }
+                    @Override
+                    public void onSuccess(GankData gankData) {
+                        Log.i(TAG, "onNext:" + new Gson().toJson(gankData));
+                    }
 
-            @Override
-            public void onFailure(Call call, Throwable t) {
-                Log.e(TAG, t.getMessage());
-            }
-        });
-
+                    @Override
+                    public void onFailure(Throwable e) {
+                        Log.i(TAG, "onError:" + e.getMessage());
+                    }
+                });
     }
 
     private static OkHttpClient getOkhttp() {

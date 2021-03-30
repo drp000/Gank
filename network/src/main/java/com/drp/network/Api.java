@@ -2,6 +2,7 @@ package com.drp.network;
 
 import com.drp.network.beans.GankData;
 
+import io.reactivex.Observable;
 import retrofit2.Call;
 import retrofit2.http.GET;
 import retrofit2.http.Path;
@@ -13,5 +14,5 @@ import retrofit2.http.Path;
  */
 public interface Api {
     @GET("data/{category}/{size}/{page}")
-    Call<GankData> getGankListByCategory(@Path("category") String category, @Path("page") int page, @Path("size") int size);
+    Observable<GankData> getGankListByCategory(@Path("category") String category, @Path("page") int page, @Path("size") int size);
 }
