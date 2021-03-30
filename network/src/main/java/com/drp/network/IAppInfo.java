@@ -1,5 +1,7 @@
 package com.drp.network;
 
+import android.app.Application;
+
 /**
  * @author durui
  * @date 2021/3/29
@@ -11,4 +13,6 @@ public interface IAppInfo {
     String getVersionName();
 
     int getVersionCode();
+
+    Application getApplicationContext();
 }

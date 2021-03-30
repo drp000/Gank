@@ -1,6 +1,8 @@
 package com.drp.gank1.beans;
 
 
+import com.drp.network.GankBaseResponse;
+
 import java.util.List;
 
 /**
@@ -8,7 +10,7 @@ import java.util.List;
  * @date 2021/3/29
  * @description
  */
-public class GankData {
+public class GankData extends GankBaseResponse {
     public int count;
     public boolean error;
     public List<GankItem> results;

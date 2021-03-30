@@ -3,8 +3,8 @@ package com.drp.gank1;
 
 import android.app.Application;
 
-import com.drp.network.ApiService;
 import com.drp.network.IAppInfo;
+import com.drp.network.base.BaseApiService;
 
 /**
  * @author durui
@@ -15,7 +15,7 @@ public class App extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        ApiService.init(new IAppInfo() {
+        BaseApiService.init(new IAppInfo() {
             @Override
             public boolean isDebug() {
                 return BuildConfig.DEBUG;
@@ -29,6 +29,11 @@ public class App extends Application {
             @Override
             public int getVersionCode() {
                 return BuildConfig.VERSION_CODE;
+            }
+
+            @Override
+            public Application getApplicationContext() {
+                return App.this;
             }
         });
     }
