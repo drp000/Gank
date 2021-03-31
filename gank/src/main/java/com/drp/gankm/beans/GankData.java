@@ -1,4 +1,4 @@
-package com.drp.gank1.beans;
+package com.drp.gankm.beans;
 
 
 import com.drp.network.GankBaseResponse;

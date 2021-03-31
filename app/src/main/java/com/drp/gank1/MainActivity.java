@@ -9,8 +9,8 @@ import android.view.View;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
 
-import com.drp.gank1.api.GankApi;
-import com.drp.gank1.beans.GankData;
+import com.drp.gankm.api.GankApi;
+import com.drp.gankm.beans.GankData;
 import com.drp.gank1.databinding.ActivityMainBinding;
 import com.drp.network.GankApiService;
 import com.drp.network.environment.EnvironmentActivity;

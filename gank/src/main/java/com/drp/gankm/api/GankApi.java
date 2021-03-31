@@ -1,10 +1,10 @@
-package com.drp.gank1.api;
+package com.drp.gankm.api;
 
 import io.reactivex.Observable;
 import retrofit2.http.GET;
 import retrofit2.http.Path;
 
-import com.drp.gank1.beans.GankData;
+import com.drp.gankm.beans.GankData;
 /**
  * @author durui
  * @date 2021/3/29
