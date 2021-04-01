@@ -11,6 +11,8 @@ import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 
 import com.drp.gank1.databinding.ActivityMainBinding;
+import com.drp.gankm.mvvm.category.CategoryFragment;
+import com.drp.gankm.mvvm.mine.MineFragment;
 import com.drp.network.environment.EnvironmentActivity;
 import com.google.android.material.tabs.TabLayout;
 
@@ -36,9 +38,9 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        mFragment = GankFragment.getInstance();
+        mFragment = CategoryFragment.getInstance();
         getSupportFragmentManager().beginTransaction()
-                .replace(R.id.fl_main, mFragment, GankFragment.class.getSimpleName())
+                .replace(R.id.fl_main, mFragment, CategoryFragment.class.getSimpleName())
                 .addToBackStack(null)
                 .commit();
         mBinding.tabMain.addTab(mBinding.tabMain.newTab().setText("Gank"));
@@ -54,17 +56,17 @@ public class MainActivity extends AppCompatActivity {
                 int position = tab.getPosition();
                 if (position == 0) {
                     if (mFragment instanceof MineFragment) {
-                        mFragment = GankFragment.getInstance();
+                        mFragment = CategoryFragment.getInstance();
                         getSupportFragmentManager().beginTransaction()
-                                .replace(R.id.fl_main, mFragment, GankFragment.class.getSimpleName())
+                                .replace(R.id.fl_main, mFragment, CategoryFragment.class.getSimpleName())
                                 .addToBackStack(null)
                                 .commit();
                     }
                 } else {
-                    if (mFragment instanceof GankFragment) {
+                    if (mFragment instanceof CategoryFragment) {
                         mFragment = MineFragment.getInstance();
                         getSupportFragmentManager().beginTransaction()
-                                .replace(R.id.fl_main, mFragment, GankFragment.class.getSimpleName())
+                                .replace(R.id.fl_main, mFragment, MineFragment.class.getSimpleName())
                                 .addToBackStack(null)
                                 .commit();
                     }
@@ -81,17 +83,17 @@ public class MainActivity extends AppCompatActivity {
                 int position = tab.getPosition();
                 if (position == 0) {
                     if (mFragment instanceof MineFragment) {
-                        mFragment = GankFragment.getInstance();
+                        mFragment = CategoryFragment.getInstance();
                         getSupportFragmentManager().beginTransaction()
-                                .replace(R.id.fl_main, mFragment, GankFragment.class.getSimpleName())
+                                .replace(R.id.fl_main, mFragment, CategoryFragment.class.getSimpleName())
                                 .addToBackStack(null)
                                 .commit();
                     }
                 } else {
-                    if (mFragment instanceof GankFragment) {
+                    if (mFragment instanceof CategoryFragment) {
                         mFragment = MineFragment.getInstance();
                         getSupportFragmentManager().beginTransaction()
-                                .replace(R.id.fl_main, mFragment, GankFragment.class.getSimpleName())
+                                .replace(R.id.fl_main, mFragment, CategoryFragment.class.getSimpleName())
                                 .addToBackStack(null)
                                 .commit();
                     }
