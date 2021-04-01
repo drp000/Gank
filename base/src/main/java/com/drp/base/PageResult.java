@@ -8,12 +8,12 @@ package com.drp.base;
  */
 public class PageResult {
     private boolean isEmpty;
-    private boolean isRefresh;
+    private boolean isFirstPage;
     private boolean hasNextPage;
 
-    public PageResult(boolean isEmpty, boolean isRefresh, boolean hasNextPage) {
+    public PageResult(boolean isEmpty, boolean isFirstPage, boolean hasNextPage) {
         this.isEmpty = isEmpty;
-        this.isRefresh = isRefresh;
+        this.isFirstPage = isFirstPage;
         this.hasNextPage = hasNextPage;
     }
 
@@ -25,12 +25,12 @@ public class PageResult {
         isEmpty = empty;
     }
 
-    public boolean isRefresh() {
-        return isRefresh;
+    public boolean isFirstPage() {
+        return isFirstPage;
     }
 
-    public void setRefresh(boolean refresh) {
-        isRefresh = refresh;
+    public void setFirstPage(boolean firstPage) {
+        isFirstPage = firstPage;
     }
 
     public boolean isHasNextPage() {

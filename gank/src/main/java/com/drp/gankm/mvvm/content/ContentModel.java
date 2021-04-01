@@ -73,7 +73,7 @@ public class ContentModel {
                             baseCustomViewModels.add(viewModel);
                         }
                         mListener.onLoadSuccess(baseCustomViewModels,
-                                new PageResult(baseCustomViewModels.isEmpty(), isRefresh, baseCustomViewModels.size() >= mSize));
+                                new PageResult(baseCustomViewModels.isEmpty(), mPage == 1, baseCustomViewModels.size() > 0));
                     }
 
                     @Override
