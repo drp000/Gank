@@ -1,4 +1,4 @@
-package com.drp.gankm.adapter;
+package com.drp.gankm.mvvm.content;
 
 
 import android.view.ViewGroup;
@@ -12,6 +12,8 @@ import com.drp.common.views.GankTextPicView;
 import com.drp.common.views.GankTextPicViewModel;
 import com.drp.common.views.GankTextView;
 import com.drp.common.views.GankTextViewModel;
+import com.drp.common.views.LoadMoreView;
+import com.drp.common.views.LoadMoreViewModel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,10 +23,11 @@ import java.util.List;
  * @date 2021/3/31
  * @description 单一职责，负责创建ViewHolder并绑定数据，如需修改UI只需修改对应的自定义View即可
  */
-public class GankTextRecyclerViewAdapter extends RecyclerView.Adapter<BaseViewHolder> {
+public class ContentTextRecyclerViewAdapter extends RecyclerView.Adapter<BaseViewHolder> {
 
     private static final int TYPE_TEXT = 1;
     private static final int TYPE_PICTURE = 2;
+    private static final int TYPE_LOAD_MORE = 3;
     private List<BaseCustomViewModel> mItems = new ArrayList<>();
 
     public void setData(List<BaseCustomViewModel> items) {
@@ -34,7 +37,7 @@ public class GankTextRecyclerViewAdapter extends RecyclerView.Adapter<BaseViewHo
 
     public void add(BaseCustomViewModel item) {
         this.mItems.add(item);
-        notifyDataSetChanged();
+        notifyItemInserted(mItems.size() - 1);
     }
 
     public void addAll(List<BaseCustomViewModel> items) {
@@ -48,6 +51,8 @@ public class GankTextRecyclerViewAdapter extends RecyclerView.Adapter<BaseViewHo
             return TYPE_TEXT;
         } else if (mItems.get(position) instanceof GankTextPicViewModel) {
             return TYPE_PICTURE;
+        } else if (mItems.get(position) instanceof LoadMoreViewModel) {
+            return TYPE_LOAD_MORE;
         }
         return -1;
     }
@@ -61,6 +66,9 @@ public class GankTextRecyclerViewAdapter extends RecyclerView.Adapter<BaseViewHo
         } else if (viewType == TYPE_PICTURE) {
             GankTextPicView gankTextPicView = new GankTextPicView(parent.getContext());
             return new BaseViewHolder(gankTextPicView);
+        } else if (viewType == TYPE_LOAD_MORE) {
+            LoadMoreView loadMoreView = new LoadMoreView(parent.getContext());
+            return new BaseViewHolder(loadMoreView);
         }
         return null;
     }
@@ -76,5 +84,10 @@ public class GankTextRecyclerViewAdapter extends RecyclerView.Adapter<BaseViewHo
             return mItems.size();
         }
         return 0;
+    }
+
+    public void removeLoadMore() {
+        mItems.remove(mItems.size() - 1);
+        notifyItemRemoved(mItems.size() - 1);
     }
 }

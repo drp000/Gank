@@ -25,6 +25,23 @@ public class CommonBindingAdapters {
         }
     }
 
+    @BindingAdapter({"imgUrl", "errorDrawableId"})
+    public static void loadImage(ImageView imageView, String url, int error) {
+        if (!TextUtils.isEmpty(url)) {
+            Glide.with(imageView.getContext())
+                    .load(url)
+//                    .transition(w)
+                    .placeholder(error)
+                    .error(error)
+                    .into(imageView);
+        }
+    }
+
+    @BindingAdapter("android:src")
+    public static void setSrc(ImageView view, int resId) {
+        view.setImageResource(resId);
+    }
+
     @BindingAdapter("android:visibility")
     public static void setVisibility(View view, Boolean visible) {
         view.setVisibility(visible ? View.VISIBLE : View.GONE);

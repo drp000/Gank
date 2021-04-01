@@ -1,11 +1,8 @@
 package com.drp.gankm.mvvm.category;
 
 
-import android.widget.ImageView;
-
 import androidx.databinding.BaseObservable;
 import androidx.databinding.Bindable;
-import androidx.databinding.BindingAdapter;
 
 /**
  * @author durui
@@ -22,10 +19,5 @@ public class CategoryViewModel extends BaseObservable {
         this.name = name;
         this.icon = icon;
         notifyChange();
-    }
-
-    @BindingAdapter("android:src")
-    public static void setSrc(ImageView view, int resId) {
-        view.setImageResource(resId);
     }
 }

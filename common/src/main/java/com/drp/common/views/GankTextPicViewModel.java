@@ -13,11 +13,12 @@ public class GankTextPicViewModel extends BaseCustomViewModel {
     public String title;
     public String url;
     public String imgUrl;
+    public int errDrawable;
 
-    public GankTextPicViewModel(String title, String url, String imgUrl) {
+    public GankTextPicViewModel(String title, String url, String imgUrl, int errDrawable) {
         this.title = title;
         this.url = url;
         this.imgUrl = imgUrl;
+        this.errDrawable = errDrawable;
     }
-
 }
