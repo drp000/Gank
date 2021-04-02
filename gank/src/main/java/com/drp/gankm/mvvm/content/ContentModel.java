@@ -20,7 +20,7 @@ import java.util.List;
 /**
  * @author durui
  * @date 2021/4/1
- * @description 需要考虑分页，缓存，预置
+ * @description 只需要考虑数据的加载和分发
  */
 public class ContentModel extends MvvmBaseModel<GankData, List<BaseCustomViewModel>> {
     private static final String TAG = ContentModel.class.getSimpleName();

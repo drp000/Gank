@@ -23,20 +23,20 @@ import io.reactivex.disposables.Disposable;
 /**
  * @author durui
  * @date 2021/4/2
- * @description ViewModel的基类，负责缓存数据的获取和保存
+ * @description ViewModel的基类，负责缓存数据的获取和保存 需要考虑分页，缓存，预置
  */
 public abstract class MvvmBaseModel<F, T> implements MvvmDataObserver<F> {
 
     private CompositeDisposable compositeDisposable;
-    protected ReferenceQueue<IBaseModelListener> mReferenceQueue;
-    protected ConcurrentLinkedQueue<WeakReference<IBaseModelListener>> mWeakListenerArrayList;
+    protected ReferenceQueue<IBaseModelListener<F, T>> mReferenceQueue;
+    protected ConcurrentLinkedQueue<WeakReference<IBaseModelListener<F, T>>> mWeakListenerArrayList;
     private BaseCachedData<F> mCachedData;
     /**
      * 缓存的key，不需要缓存传空
      */
     private String mCachedPreferenceKey;
     /**
-     * 预置的数据，没有传空
+     * 预置的数据，没有传空，一般是那些不经常改变的数据
      */
     private String mApkPredefineData;
     /**
@@ -72,28 +72,28 @@ public abstract class MvvmBaseModel<F, T> implements MvvmDataObserver<F> {
             return;
         }
         synchronized (this) {
-            Reference<? extends IBaseModelListener> releaseListener = null;
+            Reference<? extends IBaseModelListener<F, T>> releaseListener = null;
             while ((releaseListener = mReferenceQueue.poll()) != null) {
                 mWeakListenerArrayList.remove(releaseListener);
             }
-            for (WeakReference<IBaseModelListener> weakReference : mWeakListenerArrayList) {
-                IBaseModelListener modelListener = weakReference.get();
+            for (WeakReference<IBaseModelListener<F, T>> weakReference : mWeakListenerArrayList) {
+                IBaseModelListener<F, T> modelListener = weakReference.get();
                 if (modelListener == listener) {
                     return;
                 }
             }
-            WeakReference<IBaseModelListener> weakReference = new WeakReference<>(listener, mReferenceQueue);
+            WeakReference<IBaseModelListener<F, T>> weakReference = new WeakReference(listener, mReferenceQueue);
             mWeakListenerArrayList.add(weakReference);
         }
     }
 
-    public void unRegister(IBaseModelListener listener) {
+    public void unRegister(IBaseModelListener<F, T> listener) {
         if (listener == null) {
             return;
         }
         synchronized (this) {
-            for (WeakReference<IBaseModelListener> weakReference : mWeakListenerArrayList) {
-                IBaseModelListener modelListener = weakReference.get();
+            for (WeakReference<IBaseModelListener<F, T>> weakReference : mWeakListenerArrayList) {
+                IBaseModelListener<F, T> modelListener = weakReference.get();
                 if (listener == modelListener) {
                     mWeakListenerArrayList.remove(weakReference);
                     break;
@@ -180,7 +180,7 @@ public abstract class MvvmBaseModel<F, T> implements MvvmDataObserver<F> {
 
     protected void notifyResultToListeners(F netData, T data, boolean isFromCache) {
         synchronized (this) {
-            for (WeakReference<IBaseModelListener> weakReference : mWeakListenerArrayList) {
+            for (WeakReference<IBaseModelListener<F, T>> weakReference : mWeakListenerArrayList) {
                 IBaseModelListener modelListener = weakReference.get();
                 if (modelListener != null) {
                     if (mIsPaging) {
@@ -212,7 +212,7 @@ public abstract class MvvmBaseModel<F, T> implements MvvmDataObserver<F> {
 
     protected void loadFail(final String errMsg) {
         synchronized (this) {
-            for (WeakReference<IBaseModelListener> weakReference : mWeakListenerArrayList) {
+            for (WeakReference<IBaseModelListener<F, T>> weakReference : mWeakListenerArrayList) {
                 IBaseModelListener modelListener = weakReference.get();
                 if (modelListener != null) {
                     if (mIsPaging) {
