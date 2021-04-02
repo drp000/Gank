@@ -1,7 +1,7 @@
 package com.drp.network.interceptor;
 
 
-import com.drp.network.IAppInfo;
+import com.drp.base.IAppInfo;
 
 import java.io.IOException;
 

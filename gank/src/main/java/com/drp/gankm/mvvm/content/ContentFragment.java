@@ -31,15 +31,15 @@ import java.util.List;
  * @date 2021/3/31
  * @description
  */
-public class ContentFragment extends Fragment implements IBaseModelListener<List<BaseCustomViewModel>> {
+public class ContentFragment extends Fragment implements IBaseModelListener<ContentModel, List<BaseCustomViewModel>> {
 
-    private static final String TAG = ContentFragment.class.getSimpleName();
     private static final String KEY_CATEGORY = "category";
     private static final int VISIBLE_THRESHOLE = 3;
 
     private FragmentContentBinding mBinding;
     private ContentTextRecyclerViewAdapter mRecyclerViewAdapter;
     private List<BaseCustomViewModel> mContentList = new ArrayList<>();
+    private boolean hasMoreData;
 
     public static ContentFragment getInstance(String category) {
         ContentFragment fragment = new ContentFragment();
@@ -66,8 +66,8 @@ public class ContentFragment extends Fragment implements IBaseModelListener<List
         mBinding.srlContent.setRefreshing(true);
         String category = getArguments().getString(KEY_CATEGORY);
 
-        ContentModel contentModel = new ContentModel(category, 10, this);
-
+        ContentModel contentModel = new ContentModel(category, 10);
+        contentModel.register(this);
         //下拉刷新
         mBinding.srlContent.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -83,18 +83,18 @@ public class ContentFragment extends Fragment implements IBaseModelListener<List
                 LinearLayoutManager layoutManager = (LinearLayoutManager) recyclerView.getLayoutManager();
                 int itemCount = layoutManager.getItemCount();
                 int lastVisibleItemPosition = layoutManager.findLastVisibleItemPosition();
-                if (!mBinding.srlContent.isRefreshing() && itemCount <= lastVisibleItemPosition + VISIBLE_THRESHOLE) {
-                    contentModel.loadMore();
+                if (hasMoreData && !mBinding.srlContent.isRefreshing() && itemCount <= lastVisibleItemPosition + VISIBLE_THRESHOLE) {
+                    contentModel.load();
                 }
             }
         });
         //首次加载数据
         mBinding.srlContent.setRefreshing(true);
-        contentModel.refresh();
+        contentModel.getCachedDataAndLoad();
     }
 
     @Override
-    public void onLoadSuccess(List<BaseCustomViewModel> data, PageResult... pageResults) {
+    public void onLoadSuccess(ContentModel model, List<BaseCustomViewModel> data, PageResult... pageResults) {
         if (pageResults[0].isFirstPage()) {
             //第一页，意味着是刷新获取到的数据
             mContentList.clear();
@@ -107,13 +107,31 @@ public class ContentFragment extends Fragment implements IBaseModelListener<List
         mRecyclerViewAdapter.setData(mContentList);
         if (pageResults[0].isHasNextPage()) {
             //有更多的数据，需要展示加载更多的View
-            mRecyclerViewAdapter.add(new LoadMoreViewModel());
+            hasMoreData = true;
+            mRecyclerViewAdapter.add(new LoadMoreViewModel(true, "数据加载中..."));
+        } else {
+            hasMoreData = false;
+            mRecyclerViewAdapter.add(new LoadMoreViewModel(false, "已到最后一页"));
         }
     }
 
     @Override
-    public void onLoadFailure(String error, PageResult... pageResults) {
-        Toast.makeText(getContext(), "数据加载失败：" + error, Toast.LENGTH_SHORT).show();
-        mBinding.srlContent.setRefreshing(false);
+    public void onLoadFailure(ContentModel model, String error, PageResult... pageResults) {
+//        Toast.makeText(getContext(), "数据加载失败：" + error, Toast.LENGTH_SHORT).show();
+        if (pageResults[0].isFirstPage()) {
+            //第一页，意味着是刷新获取到的数据
+            mBinding.srlContent.setRefreshing(false);
+        } else {
+            //加载更多完成后需要移除加载更多的View
+            mRecyclerViewAdapter.removeLoadMore();
+        }
+        if (pageResults[0].isHasNextPage()) {
+            //有更多的数据，需要展示加载更多的View
+            hasMoreData = true;
+            mRecyclerViewAdapter.add(new LoadMoreViewModel(true, "数据加载中..."));
+        } else {
+            hasMoreData = false;
+            mRecyclerViewAdapter.add(new LoadMoreViewModel(false, "已到最后一页"));
+        }
     }
 }

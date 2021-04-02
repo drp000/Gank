@@ -2,7 +2,7 @@ package com.drp.network.base;
 
 
 import com.drp.network.HttpErrorHandler;
-import com.drp.network.IAppInfo;
+import com.drp.base.IAppInfo;
 import com.drp.network.environment.EnvironmentActivity;
 import com.drp.network.environment.IEnvironment;
 import com.drp.network.interceptor.CommonRequestInterceptor;

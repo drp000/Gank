@@ -2,11 +2,9 @@ package com.drp.gankm.mvvm.content;
 
 
 import android.annotation.SuppressLint;
-import android.util.Log;
 
-import com.drp.base.IBaseModelListener;
-import com.drp.base.PageResult;
 import com.drp.base.customview.BaseCustomViewModel;
+import com.drp.base.model.MvvmBaseModel;
 import com.drp.common.views.GankTextPicViewModel;
 import com.drp.common.views.GankTextViewModel;
 import com.drp.gankm.R;
@@ -14,8 +12,7 @@ import com.drp.gankm.api.GankApi;
 import com.drp.gankm.beans.GankData;
 import com.drp.gankm.beans.GankItem;
 import com.drp.network.GankApiService;
-import com.drp.network.observer.BaseObserver;
-import com.google.gson.Gson;
+import com.drp.network.observer.BaseNetObserver;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,65 +20,46 @@ import java.util.List;
 /**
  * @author durui
  * @date 2021/4/1
- * @description
+ * @description 需要考虑分页，缓存，预置
  */
-public class ContentModel {
+public class ContentModel extends MvvmBaseModel<GankData, List<BaseCustomViewModel>> {
     private static final String TAG = ContentModel.class.getSimpleName();
-    private IBaseModelListener<List<BaseCustomViewModel>> mListener;
-    private String mCategory;
-    private int mPage;
-    private int mSize;
-    private boolean isRefresh;
+    private final String mCategory;
+    private final int mSize;
 
-    public ContentModel(String category, int size, IBaseModelListener<List<BaseCustomViewModel>> listener) {
+    public ContentModel(String category, int size) {
+        super(GankData.class, true, "cache_" + category, null, 1);
         this.mCategory = category;
-        this.mListener = listener;
         this.mSize = size;
-        mPage = 1;
     }
-
-    public void refresh() {
-        isRefresh = true;
-        mPage = 1;
-        load();
-    }
-
-
-    public void loadMore() {
-        isRefresh = false;
-        mPage++;
-        load();
-    }
-
 
     @SuppressLint("CheckResult")
-    private void load() {
+    protected void load() {
         GankApiService.getService(GankApi.class)
-                .getGankListByCategory(mCategory, mPage, mSize)
-                .compose(GankApiService.getInstance().applySchedulers(new BaseObserver<GankData>() {
-                    @Override
-                    public void onSuccess(GankData gankData) {
-                        Log.i(TAG, new Gson().toJson(gankData));
-                        List<BaseCustomViewModel> baseCustomViewModels = new ArrayList<>();
-                        for (GankItem result : gankData.results) {
-                            BaseCustomViewModel viewModel;
-                            if (result.images != null && result.images.size() > 0) {
-                                viewModel = new GankTextPicViewModel(result.desc, result.url, result.images.get(0), R.mipmap.icon_weal);
-                            } else {
-                                viewModel = new GankTextViewModel(result.desc, result.url);
-                            }
-                            baseCustomViewModels.add(viewModel);
-                        }
-                        mListener.onLoadSuccess(baseCustomViewModels,
-                                new PageResult(baseCustomViewModels.isEmpty(), mPage == 1, baseCustomViewModels.size() > 0));
-                    }
+                .getGankListByCategory(mCategory, mPageNumber, mSize)
+                .compose(GankApiService.getInstance()
+                        .applySchedulers(new BaseNetObserver<GankData>(this, this)));
 
-                    @Override
-                    public void onFailure(Throwable e) {
-                        e.printStackTrace();
-                        mListener.onLoadFailure(e.getMessage());
-                    }
-                }));
+    }
 
+    @Override
+    public void onSuccess(GankData gankData, boolean isFromCache) {
+        List<BaseCustomViewModel> baseCustomViewModels = new ArrayList<>();
+        for (GankItem result : gankData.results) {
+            BaseCustomViewModel viewModel;
+            if (result.images != null && result.images.size() > 0) {
+                viewModel = new GankTextPicViewModel(result.desc, result.url, result.images.get(0), R.mipmap.icon_weal);
+            } else {
+                viewModel = new GankTextViewModel(result.desc, result.url);
+            }
+            baseCustomViewModels.add(viewModel);
+        }
+        notifyResultToListeners(gankData, baseCustomViewModels, isFromCache);
+    }
+
+    @Override
+    public void onFailure(Throwable e) {
+        e.printStackTrace();
+        loadFail(e.getMessage());
     }
 }

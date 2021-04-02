@@ -3,6 +3,10 @@
 
     <data>
 
+        <variable
+            name="viewModel"
+            type="com.drp.common.views.LoadMoreViewModel" />
+
     </data>
 
     <RelativeLayout
@@ -19,12 +23,14 @@
 
             <ProgressBar
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:visibility="@{viewModel.hasMore}" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="正在加载数据..." />
+                android:text="@{viewModel.tip}"
+                android:textSize="16sp" />
         </LinearLayout>
 
     </RelativeLayout>

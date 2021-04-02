@@ -40,6 +40,21 @@ public class ContentTextRecyclerViewAdapter extends RecyclerView.Adapter<BaseVie
         notifyItemInserted(mItems.size() - 1);
     }
 
+    public void add(LoadMoreViewModel item) {
+        if (mItems.size() < 1) {
+            return;
+        }
+        BaseCustomViewModel viewModel = mItems.get(mItems.size() - 1);
+        if (viewModel instanceof LoadMoreViewModel) {
+            LoadMoreViewModel loadMoreViewModel = (LoadMoreViewModel) viewModel;
+            loadMoreViewModel.setHasMore(item.isHasMore());
+            loadMoreViewModel.setTip(item.getTip());
+        } else {
+            this.mItems.add(item);
+            notifyItemInserted(mItems.size() - 1);
+        }
+    }
+
     public void addAll(List<BaseCustomViewModel> items) {
         this.mItems.addAll(items);
         notifyDataSetChanged();

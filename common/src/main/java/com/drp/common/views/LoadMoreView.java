@@ -21,7 +21,7 @@ public class LoadMoreView extends BaseCustomView<LoadMoreBinding, LoadMoreViewMo
 
     @Override
     protected void setDataToView(LoadMoreViewModel viewModel) {
-
+        getDataBinding().setViewModel(viewModel);
     }
 
     @Override

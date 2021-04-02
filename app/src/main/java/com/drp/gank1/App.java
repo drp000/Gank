@@ -3,7 +3,8 @@ package com.drp.gank1;
 
 import android.app.Application;
 
-import com.drp.network.IAppInfo;
+import com.drp.base.IAppInfo;
+import com.drp.base.model.BasicDataPreferenceUtil;
 import com.drp.network.base.BaseApiService;
 
 /**
@@ -15,26 +16,9 @@ public class App extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        BaseApiService.init(new IAppInfo() {
-            @Override
-            public boolean isDebug() {
-                return BuildConfig.DEBUG;
-            }
+        IAppInfo appInfo = new AppInfo(this);
+        BaseApiService.init(appInfo);
+        BasicDataPreferenceUtil.init(appInfo);
 
-            @Override
-            public String getVersionName() {
-                return BuildConfig.VERSION_NAME;
-            }
-
-            @Override
-            public int getVersionCode() {
-                return BuildConfig.VERSION_CODE;
-            }
-
-            @Override
-            public Application getApplicationContext() {
-                return App.this;
-            }
-        });
     }
 }
